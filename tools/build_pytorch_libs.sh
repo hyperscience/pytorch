@@ -155,6 +155,10 @@ fi
 if [ -z "$MAX_JOBS" ]; then
   MAX_JOBS="$(getconf _NPROCESSORS_ONLN)"
 fi
+MKLDNN_FLAGS=""
+if [[ ! -z "USE_MKLDNN" ]]; then
+  MKLDNN_FLAGS="-DUSE_MKLDNN=$USE_MKLDNN -DMKLDNN_ENABLE_CONCURRENT_EXEC=ON"
+fi
 
 BUILD_TYPE="Release"
 if [[ -n "$DEBUG" && $DEBUG -ne 0 ]]; then
@@ -235,7 +239,7 @@ function build_caffe2() {
 		       -DCUDNN_INCLUDE_DIR=$CUDNN_INCLUDE_DIR \
 		       -DCUDNN_LIB_DIR=$CUDNN_LIB_DIR \
 		       -DCUDNN_LIBRARY=$CUDNN_LIBRARY \
-		       -DUSE_MKLDNN=$USE_MKLDNN \
+		       $MKLDNN_FLAGS \
 		       -DNCCL_EXTERNAL=$USE_CUDA \
 		       -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR" \
 		       -DCMAKE_C_FLAGS="$USER_CFLAGS" \
